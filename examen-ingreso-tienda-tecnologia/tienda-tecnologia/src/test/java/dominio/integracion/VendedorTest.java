@@ -1,5 +1,6 @@
 package dominio.integracion;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.After;
@@ -18,24 +19,25 @@ import testdatabuilder.ProductoTestDataBuilder;
 public class VendedorTest {
 
 	private static final String COMPUTADOR_LENOVO = "Computador Lenovo";
-	private static final String NOMBRE_CLIENTE = "José Duque";
-	
+	private static final String NOMBRE_CLIENTE = "Daniela Zuluaga";
+	private static final String CODIGO = "A01H1AU51";// S01H1AT51 A01H1AU51
+	private static final String CODIGO2 = "S01H1AT51";// S01H1AT51 A01H1AU51
+
 	private SistemaDePersistencia sistemaPersistencia;
-	
+
 	private RepositorioProducto repositorioProducto;
 	private RepositorioGarantiaExtendida repositorioGarantia;
 
 	@Before
 	public void setUp() {
-		
+
 		sistemaPersistencia = new SistemaDePersistencia();
-		
+
 		repositorioProducto = sistemaPersistencia.obtenerRepositorioProductos();
 		repositorioGarantia = sistemaPersistencia.obtenerRepositorioGarantia();
-		
+
 		sistemaPersistencia.iniciar();
 	}
-	
 
 	@After
 	public void tearDown() {
@@ -51,11 +53,7 @@ public class VendedorTest {
 		Vendedor vendedor = new Vendedor(repositorioProducto, repositorioGarantia);
 
 		// act
-		//try {
-			vendedor.generarGarantia(producto.getCodigo(),NOMBRE_CLIENTE);
-		/*} catch (GarantiaExtendidaException e) {
-			System.out.println(e.getMessage());
-		}*/
+		vendedor.generarGarantia(producto.getCodigo(), NOMBRE_CLIENTE);
 
 		// assert
 		Assert.assertTrue(vendedor.tieneGarantia(producto.getCodigo()));
@@ -68,21 +66,58 @@ public class VendedorTest {
 
 		// arrange
 		Producto producto = new ProductoTestDataBuilder().conNombre(COMPUTADOR_LENOVO).build();
-		
+
 		repositorioProducto.agregar(producto);
-		
+
 		Vendedor vendedor = new Vendedor(repositorioProducto, repositorioGarantia);
 
 		// act
-		vendedor.generarGarantia(producto.getCodigo(),NOMBRE_CLIENTE);;
+		vendedor.generarGarantia(producto.getCodigo(), NOMBRE_CLIENTE);
+		
 		try {
-			
-			vendedor.generarGarantia(producto.getCodigo(),NOMBRE_CLIENTE);
+
+			vendedor.generarGarantia(producto.getCodigo(), NOMBRE_CLIENTE);
 			fail();
-			
+
 		} catch (GarantiaExtendidaException e) {
 			// assert
 			Assert.assertEquals(Vendedor.EL_PRODUCTO_TIENE_GARANTIA, e.getMessage());
 		}
 	}
+
+	@Test
+	public void validarExcepcionGarantiaTest() {
+
+		// arrange
+		Producto producto = new ProductoTestDataBuilder().conCodigo(CODIGO).build();
+		repositorioProducto.agregar(producto);
+		Vendedor vendedor = new Vendedor(repositorioProducto, repositorioGarantia);
+
+		// act
+		try {
+			vendedor.generarGarantia(producto.getCodigo(), NOMBRE_CLIENTE);
+		} catch (GarantiaExtendidaException e) {
+			// assert
+			Assert.assertEquals(Vendedor.EL_PRODUCTO_NO_TIENE_GARANTIA, e.getMessage());
+		}
+	}
+	
+	@Test
+	public void validarPrecioMayorTest() {
+		// arrange
+
+		Producto producto = new ProductoTestDataBuilder().conCodigo(CODIGO).build();
+		repositorioProducto.agregar(producto);
+		Vendedor vendedor = new Vendedor(repositorioProducto, repositorioGarantia);		
+		
+		// act
+		vendedor.generarGarantia(CODIGO2, NOMBRE_CLIENTE);
+		double precioFinal = repositorioGarantia.obtener(CODIGO).getPrecioGarantia();
+		double precioProducto = producto.getPrecio() * 0.2;
+		boolean precioMayor = (precioProducto == precioFinal);
+		// assert
+		assertTrue(precioMayor);
+
+	}
+	
 }

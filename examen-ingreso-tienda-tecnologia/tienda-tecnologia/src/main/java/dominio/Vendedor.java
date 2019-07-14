@@ -12,7 +12,7 @@ public class Vendedor {
 
 	public static final String EL_PRODUCTO_TIENE_GARANTIA = "El producto ya cuenta con una garantia extendida";
 	public static final String EL_PRODUCTO_NO_TIENE_GARANTIA = "Este producto no cuenta con garantía extendida";
-	public static final int PRECIO_PRODUCTO = 500000;
+	public static final int PRECIO_PRODUCTO = 500001;
 	public double porcentaje;
 	public int cantidadDias;
 
@@ -35,7 +35,7 @@ public class Vendedor {
 		} else if (tieneGarantia(codigo)) {
 			throw new GarantiaExtendidaException(EL_PRODUCTO_TIENE_GARANTIA);
 		}
-		if (producto.getPrecio() >= PRECIO_PRODUCTO) {
+		if (producto.getPrecio() > PRECIO_PRODUCTO) {
 			porcentaje = 0.2;
 			cantidadDias = 200;
 			garantiaExtendida = new GarantiaExtendida(producto, calcularFechaActual(), calcularFechaFin(cantidadDias),
