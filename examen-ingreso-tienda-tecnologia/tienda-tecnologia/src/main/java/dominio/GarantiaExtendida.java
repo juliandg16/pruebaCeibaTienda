@@ -47,27 +47,5 @@ public class GarantiaExtendida {
 		return nombreCliente;
 	}
 
-	public Date calcularFechaActual(){
-		Date fechaActual = new Date();
-		return fechaActual;
-	}
-	
-	public Date calcularFechaFin(int cantDias){
-		//tomar 200 días para mayor 500
-		//else 100 días
-		//si es domingo sumar 2
-		//no contar lunes
-		Date fechaFin;
-		Calendar now = Calendar.getInstance();
-		
-		for (int i = 0; i < cantDias; i++) {
-			if (!(now.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)) {
-				now.add(Calendar.DAY_OF_WEEK,1);
-				System.out.println(now.getTime());
 
-			}
-		}
-		
-		return null;
-	}
 }
