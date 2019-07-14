@@ -26,6 +26,18 @@ public class GarantiaExtendidaEntity {
 
 	private Date fechaFinGarantia;
 
+	public void setFechaFinGarantia(Date fechaFinGarantia) {
+		this.fechaFinGarantia = fechaFinGarantia;
+	}
+
+	public void setNombreCliente(String nombreCliente) {
+		this.nombreCliente = nombreCliente;
+	}
+
+	public void setPrecio(double precio) {
+		this.precio = precio;
+	}
+
 	private String nombreCliente;
 
 	private double precio;

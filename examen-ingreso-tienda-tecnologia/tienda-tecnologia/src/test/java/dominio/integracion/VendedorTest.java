@@ -20,8 +20,8 @@ public class VendedorTest {
 
 	private static final String COMPUTADOR_LENOVO = "Computador Lenovo";
 	private static final String NOMBRE_CLIENTE = "Daniela Zuluaga";
-	private static final String CODIGO = "A01H1AU51";// S01H1AT51 A01H1AU51
-	private static final String CODIGO2 = "S01H1AT51";// S01H1AT51 A01H1AU51
+	private static final String CODIGO = "A01H1AU51";// Codigo con 3 vocales
+	private static final String CODIGO2 = "S01H1AT51";// Código con precio garantia mayor a 500
 
 	private SistemaDePersistencia sistemaPersistencia;
 
@@ -106,14 +106,35 @@ public class VendedorTest {
 	public void validarPrecioMayorTest() {
 		// arrange
 
-		Producto producto = new ProductoTestDataBuilder().conCodigo(CODIGO).build();
+		Producto producto = new ProductoTestDataBuilder().conCodigo(CODIGO2).build();
 		repositorioProducto.agregar(producto);
 		Vendedor vendedor = new Vendedor(repositorioProducto, repositorioGarantia);		
 		
 		// act
 		vendedor.generarGarantia(CODIGO2, NOMBRE_CLIENTE);
-		double precioFinal = repositorioGarantia.obtener(CODIGO).getPrecioGarantia();
+		
+		double precioFinal = repositorioGarantia.obtener(CODIGO2).getPrecioGarantia();
 		double precioProducto = producto.getPrecio() * 0.2;
+		
+		boolean precioMayor = (precioProducto == precioFinal);
+		// assert
+		assertTrue(precioMayor);
+
+	}
+	@Test
+	public void validarPrecioMenorTest() {
+		// arrange
+		
+		Producto producto = new ProductoTestDataBuilder().conCodigo(CODIGO2).conPrecio(480000).build();
+		repositorioProducto.agregar(producto);
+		Vendedor vendedor = new Vendedor(repositorioProducto, repositorioGarantia);		
+		
+		// act
+		vendedor.generarGarantia(CODIGO2, NOMBRE_CLIENTE);
+		
+		double precioFinal = repositorioGarantia.obtener(CODIGO2).getPrecioGarantia();
+		double precioProducto = producto.getPrecio() * 0.1;
+		
 		boolean precioMayor = (precioProducto == precioFinal);
 		// assert
 		assertTrue(precioMayor);
